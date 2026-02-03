@@ -1,8 +1,10 @@
 import json
+import math
 import pprint
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 from jinja2 import Environment, FileSystemLoader, select_autoescape
-from livereload import Server, shell
+from livereload import Server
+from more_itertools import chunked
 
 
 def read_file():
@@ -21,9 +23,11 @@ def on_reload():
     template = env.get_template('template.html')
 
     books = read_file()
+    half = math.ceil(len(books) / 2)
+    columns = list(chunked(books, half))
 
     rendered_page = template.render(
-        books=books,
+        columns=columns,
     )
 
     with open('index.html', 'w', encoding="utf8") as file:
@@ -34,7 +38,8 @@ def main():
     on_reload()
     server = Server()
     server.watch('template.html', on_reload)
-    server.serve(root='.', host='127.0.0.1', port=5500)
+    print("server.serve start")
+    server.serve(root='.', host='127.0.0.1', port=5500, debug=True)
 
 
 if __name__ == '__main__':
