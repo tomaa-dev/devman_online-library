@@ -15,10 +15,10 @@
       <ul class="pagination justify-content-center">
         {% if prev_link %}
           <li class="page-item">
-            <a class="page-link" href="{{ prev_link }}">Previous</a>
+            <a class="page-link" href="{{ prev_link }}">Предыдущая</a>
           </li>
         {% else %}
-          <li class="page-item disabled"><span class="page-link">Previous</span></li>
+          <li class="page-item disabled"><span class="page-link">Предыдущая</span></li>
         {% endif %}
 
         {% for link in page_links %}
@@ -29,10 +29,10 @@
 
         {% if next_link %}
           <li class="page-item">
-            <a class="page-link" href="{{ next_link }}">Next</a>
+            <a class="page-link" href="{{ next_link }}">Следующая</a>
           </li>
         {% else %}
-          <li class="page-item disabled"><span class="page-link">Next</span></li>
+          <li class="page-item disabled"><span class="page-link">Следующая</span></li>
         {% endif %}
       </ul>
     </nav>
