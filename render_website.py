@@ -1,4 +1,5 @@
 import json
+import os
 import math
 import pprint
 from http.server import HTTPServer, SimpleHTTPRequestHandler
@@ -15,31 +16,66 @@ def read_file():
     return books
 
 
-def on_reload():
+def create_directory(directory):
+    os.makedirs(directory, exist_ok=True)
+
+
+def split_books(books):
+    half = math.ceil(len(books) / 2)
+    columns = list(chunked(books, half))
+    return columns
+
+
+def split_pages(books):
+    pages_amount = 45
+    pages = list(chunked(books, pages_amount))
+    return pages
+
+
+def on_reload(template, directory, pages):
+    total = len(pages)
+    for page_id, page in enumerate(pages, start=1):
+        columns = split_books(page)
+        prev_link = f"index{page_id-1}.html" if page_id > 1 else None
+        next_link = f"index{page_id+1}.html" if page_id < total else None
+        page_links = [f"index{i}.html" for i in range(1, total + 1)]
+
+        rendered_page = template.render(
+            columns=columns,
+            prev_link=prev_link,
+            next_link=next_link,
+            page_links=page_links,
+            current_page=page_id
+        )
+
+        filename = f"index{page_id}.html"
+        filepath = os.path.join(directory, filename)
+        with open(filepath, 'w', encoding="utf8") as file:
+            file.write(rendered_page)
+
+
+def main():
     env = Environment(
         loader=FileSystemLoader('.'),
         autoescape=select_autoescape(['html', 'xml'])
     )
     template = env.get_template('template.html')
 
-    books = read_file()
-    half = math.ceil(len(books) / 2)
-    columns = list(chunked(books, half))
-
-    rendered_page = template.render(
-        columns=columns,
-    )
-
-    with open('index.html', 'w', encoding="utf8") as file:
-        file.write(rendered_page)
+    directory = os.path.join(os.path.dirname(__file__), 'pages')
+    create_directory(directory)
 
 
-def main():  
-    on_reload()
+    def regenerate():
+        books = read_file()
+        pages = split_pages(books)
+        on_reload(template, directory, pages)
+
+    regenerate()
+
     server = Server()
-    server.watch('template.html', on_reload)
+    server.watch('template.html', regenerate)
     print("server.serve start")
-    server.serve(root='.', host='127.0.0.1', port=5500, debug=True)
+    server.serve(root='pages', host='127.0.0.1', port=5500, debug=True)
 
 
 if __name__ == '__main__':
