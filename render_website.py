@@ -27,8 +27,8 @@ def split_books(books):
 
 
 def split_pages(books):
-    pages_amount = 45
-    pages = list(chunked(books, pages_amount))
+    books_amount = 20
+    pages = list(chunked(books, books_amount))
     return pages
 
 
