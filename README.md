@@ -6,6 +6,8 @@ Cкрипт генерирует статические HTML‑страницы 
 ## "Скачать библиотеку"
 
 Проект опубликован на GitHub Pages - [Online-library](https://tomaa-dev.github.io/devman_online-library/pages), достаточно просто перейти по ссылке на сайт и читать книги онлайн.
+Сайт выглядит следующим образом:
+[![Library.gif](https://i.postimg.cc/sX7B2ZzM/Library.gif)](https://postimg.cc/wyxxfM7z)
 
 ## "Хочу такой же"
 
