@@ -48,10 +48,19 @@ def on_reload(template, directory, pages):
             current_page=page_id
         )
 
-        filename = f"index{page_id}.html"
-        filepath = os.path.join(directory, filename)
-        with open(filepath, 'w', encoding="utf8") as file:
-            file.write(rendered_page)
+        if page_id == 1:
+            filepath_root = os.path.join(directory, 'index.html')
+            with open(filepath_root, 'w', encoding="utf8") as f:
+                f.write(rendered_page)
+
+            first_filepath = os.path.join(directory, 'index1.html')
+            with open(first_filepath, 'w', encoding="utf8") as f:
+                f.write(rendered_page)
+        else:
+            filename = f"index{page_id}.html"
+            filepath = os.path.join(directory, filename)
+            with open(filepath, 'w', encoding="utf8") as file:
+               file.write(rendered_page)
 
 
 def main():
@@ -75,7 +84,7 @@ def main():
     server = Server()
     server.watch('template.html', regenerate)
     print("server.serve start")
-    server.serve(root='pages', host='127.0.0.1', port=5500, debug=True)
+    server.serve(root=directory, host='127.0.0.1', port=5500, debug=True)
 
 
 if __name__ == '__main__':
