@@ -56,9 +56,7 @@ def main():
 
     def regenerate():
         with open("meta_data.json", "r", encoding="utf-8") as file:
-            meta_data = file.read()
-            books = json.loads(meta_data)
-
+            books = json.load(file)
         pages = split_pages(books)
         on_reload(template, directory_to_pages, pages, pages_dirname)
 
