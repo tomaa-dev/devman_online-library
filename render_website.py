@@ -64,7 +64,6 @@ def main():
 
     server = Server()
     server.watch('template.html', regenerate)
-    print("server.serve start")
     server.serve(root=base_directory, host='127.0.0.1', port=5500, debug=True)
 
 
