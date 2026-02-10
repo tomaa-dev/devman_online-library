@@ -14,8 +14,8 @@ def read_file():
     return books
 
 
-def create_directory(directory):
-    os.makedirs(directory, exist_ok=True)
+def create_directory(directory_to_pages):
+    os.makedirs(directory_to_pages, exist_ok=True)
 
 
 def split_books(books):
@@ -30,13 +30,13 @@ def split_pages(books):
     return pages
 
 
-def on_reload(template, directory, pages):
+def on_reload(template, directory_to_pages, base_directory, pages, pages_dirname):
     total = len(pages)
     for page_id, page in enumerate(pages, start=1):
         columns = split_books(page)
-        prev_link = f"index{page_id-1}.html" if page_id > 1 else None
-        next_link = f"index{page_id+1}.html" if page_id < total else None
-        page_links = [f"index{i}.html" for i in range(1, total + 1)]
+        prev_link = f"/{pages_dirname}/index{page_id-1}.html" if page_id > 1 else None
+        next_link = f"/{pages_dirname}/index{page_id+1}.html" if page_id < total else None
+        page_links = [f"/{pages_dirname}/index{i}.html" for i in range(1, total + 1)]
 
         rendered_page = template.render(
             columns=columns,
@@ -46,43 +46,37 @@ def on_reload(template, directory, pages):
             current_page=page_id
         )
 
-        if page_id == 1:
-            filepath_root = os.path.join(directory, 'index.html')
-            with open(filepath_root, 'w', encoding="utf8") as f:
-                f.write(rendered_page)
-
-            first_filepath = os.path.join(directory, 'index1.html')
-            with open(first_filepath, 'w', encoding="utf8") as f:
-                f.write(rendered_page)
-        else:
-            filename = f"index{page_id}.html"
-            filepath = os.path.join(directory, filename)
-            with open(filepath, 'w', encoding="utf8") as file:
-               file.write(rendered_page)
+        filename = f"index{page_id}.html"
+        filepath_pages = os.path.join(directory_to_pages, filename)
+        with open(filepath_pages, 'w', encoding="utf8") as file:
+            file.write(rendered_page)
 
 
 def main():
+    pages_dirname = 'pages'
+    base_directory = os.path.abspath(os.path.dirname(__file__))
+
     env = Environment(
-        loader=FileSystemLoader('.'),
+        loader=FileSystemLoader(base_directory),
         autoescape=select_autoescape(['html', 'xml'])
     )
     template = env.get_template('template.html')
 
-    directory = os.path.join(os.path.dirname(__file__), 'pages')
-    create_directory(directory)
+    directory_to_pages = os.path.join(base_directory, pages_dirname)
+    create_directory(directory_to_pages)
 
 
     def regenerate():
         books = read_file()
         pages = split_pages(books)
-        on_reload(template, directory, pages)
+        on_reload(template, directory_to_pages, base_directory, pages, pages_dirname)
 
     regenerate()
 
     server = Server()
     server.watch('template.html', regenerate)
     print("server.serve start")
-    server.serve(root=directory, host='127.0.0.1', port=5500, debug=True)
+    server.serve(root=base_directory, host='127.0.0.1', port=5500, debug=True)
 
 
 if __name__ == '__main__':
