@@ -6,18 +6,6 @@ from livereload import Server
 from more_itertools import chunked
 
 
-def read_file():
-    with open("meta_data.json", "r", encoding="utf-8") as file:
-        meta_data = file.read()
-
-    books = json.loads(meta_data)
-    return books
-
-
-def create_directory(directory_to_pages):
-    os.makedirs(directory_to_pages, exist_ok=True)
-
-
 def split_books(books):
     half = math.ceil(len(books) / 2)
     columns = list(chunked(books, half))
@@ -30,7 +18,7 @@ def split_pages(books):
     return pages
 
 
-def on_reload(template, directory_to_pages, base_directory, pages, pages_dirname):
+def on_reload(template, directory_to_pages, pages, pages_dirname):
     total = len(pages)
     for page_id, page in enumerate(pages, start=1):
         columns = split_books(page)
@@ -63,13 +51,16 @@ def main():
     template = env.get_template('template.html')
 
     directory_to_pages = os.path.join(base_directory, pages_dirname)
-    create_directory(directory_to_pages)
+    os.makedirs(directory_to_pages, exist_ok=True)
 
 
     def regenerate():
-        books = read_file()
+        with open("meta_data.json", "r", encoding="utf-8") as file:
+            meta_data = file.read()
+            books = json.loads(meta_data)
+
         pages = split_pages(books)
-        on_reload(template, directory_to_pages, base_directory, pages, pages_dirname)
+        on_reload(template, directory_to_pages, pages, pages_dirname)
 
     regenerate()
 
