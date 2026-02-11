@@ -1,6 +1,7 @@
 import json
 import os
 import math
+from functools import partial
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from livereload import Server
 from more_itertools import chunked
@@ -40,6 +41,15 @@ def on_reload(template, directory_to_pages, pages, pages_dirname):
             file.write(rendered_page)
 
 
+def regenerate(env, directory_to_pages, pages_dirname):
+        with open("meta_data.json", "r", encoding="utf-8") as file:
+            books = json.load(file)
+        pages = split_pages(books)
+
+        template = env.get_template('template.html')
+        on_reload(template, directory_to_pages, pages, pages_dirname)
+
+
 def main():
     pages_dirname = 'pages'
     base_directory = os.path.abspath(os.path.dirname(__file__))
@@ -48,22 +58,15 @@ def main():
         loader=FileSystemLoader(base_directory),
         autoescape=select_autoescape(['html', 'xml'])
     )
-    template = env.get_template('template.html')
 
     directory_to_pages = os.path.join(base_directory, pages_dirname)
     os.makedirs(directory_to_pages, exist_ok=True)
 
-
-    def regenerate():
-        with open("meta_data.json", "r", encoding="utf-8") as file:
-            books = json.load(file)
-        pages = split_pages(books)
-        on_reload(template, directory_to_pages, pages, pages_dirname)
-
-    regenerate()
+    regenerate_no_args = partial(regenerate, env, directory_to_pages, pages_dirname)
+    regenerate_no_args()
 
     server = Server()
-    server.watch('template.html', regenerate)
+    server.watch('template.html', regenerate_no_args)
     server.serve(root=base_directory, host='127.0.0.1', port=5500, debug=True)
 
 
