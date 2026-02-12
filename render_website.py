@@ -24,10 +24,6 @@ def on_reload(template, directory_to_pages, pages, pages_dirname):
     total = len(pages)
     for page_id, page in enumerate(pages, start=1):
         columns = split_books(page)
-        for row in columns:
-            for book in row:
-                book['img_src'] = quote(book['img_src'])
-                book['book_path'] = quote(book['book_path'])
         prev_link = f"/{pages_dirname}/index{page_id-1}.html" if page_id > 1 else None
         next_link = f"/{pages_dirname}/index{page_id+1}.html" if page_id < total else None
         page_links = [f"/{pages_dirname}/index{i}.html" for i in range(1, total + 1)]
