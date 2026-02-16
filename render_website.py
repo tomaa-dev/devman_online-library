@@ -42,14 +42,23 @@ def on_reload(template, directory_to_pages, pages, pages_dirname):
             file.write(rendered_page)
 
 
-def regenerate(env, directory_to_pages, pages_dirname):
-        with open("meta_data.json", "r", encoding="utf-8") as file:
-            books = json.load(file)
+def regenerate(env, directory_to_pages, pages_dirname, base_directory):
+    with open("meta_data.json", "r", encoding="utf-8") as file:
+        books = json.load(file)
 
-        pages = split_pages(books)
+    pages = split_pages(books)
 
-        template = env.get_template('template.html')
-        on_reload(template, directory_to_pages, pages, pages_dirname)
+    template = env.get_template('template.html')
+    on_reload(template, directory_to_pages, pages, pages_dirname)
+
+    if pages:
+        first_page_path = os.path.join(directory_to_pages, "index1.html")
+        index_path = os.path.join(base_directory, "index.html")
+        if os.path.exists(first_page_path):
+            with open(first_page_path, 'r', encoding="utf8") as src:
+                content = src.read()
+            with open(index_path, 'w', encoding="utf8") as dst:
+                dst.write(content)
 
 
 def main():
@@ -66,7 +75,7 @@ def main():
     directory_to_pages = os.path.join(base_directory, pages_dirname)
     os.makedirs(directory_to_pages, exist_ok=True)
 
-    regenerate_no_args = partial(regenerate, env, directory_to_pages, pages_dirname)
+    regenerate_no_args = partial(regenerate, env, directory_to_pages, pages_dirname, base_directory)
     regenerate_no_args()
 
     server = Server()
