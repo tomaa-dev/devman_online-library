@@ -24,9 +24,9 @@ def on_reload(template, directory_to_pages, pages, pages_dirname):
     total = len(pages)
     for page_id, page in enumerate(pages, start=1):
         columns = split_books(page)
-        prev_link = f"/{pages_dirname}/index{page_id-1}.html" if page_id > 1 else None
-        next_link = f"/{pages_dirname}/index{page_id+1}.html" if page_id < total else None
-        page_links = [f"/{pages_dirname}/index{i}.html" for i in range(1, total + 1)]
+        prev_link = f"index{page_id-1}.html" if page_id > 1 else None
+        next_link = f"index{page_id+1}.html" if page_id < total else None
+        page_links = [f"index{i}.html" for i in range(1, total + 1)]
 
         rendered_page = template.render(
             columns=columns,
@@ -53,7 +53,7 @@ def regenerate(env, directory_to_pages, pages_dirname, base_directory):
 
     if pages:
         first_page_path = os.path.join(directory_to_pages, "index1.html")
-        index_path = os.path.join(base_directory, "index.html")
+        index_path = os.path.join(directory_to_pages, "index.html")
         if os.path.exists(first_page_path):
             with open(first_page_path, 'r', encoding="utf8") as src:
                 content = src.read()
