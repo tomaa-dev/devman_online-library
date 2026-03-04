@@ -24,9 +24,9 @@ def on_reload(template, directory_to_pages, pages):
     total = len(pages)
     for page_id, page in enumerate(pages, start=1):
         columns = split_books(page)
-        prev_link = f"index{page_id-1}.html" if page_id > 1 else None
-        next_link = f"index{page_id+1}.html" if page_id < total else None
-        page_links = [f"index{i}.html" for i in range(1, total + 1)]
+        prev_link = f'index{page_id-1}.html' if page_id > 1 else None
+        next_link = f'index{page_id+1}.html' if page_id < total else None
+        page_links = [f'index{i}.html' for i in range(1, total + 1)]
 
         rendered_page = template.render(
             columns=columns,
@@ -36,14 +36,14 @@ def on_reload(template, directory_to_pages, pages):
             current_page=page_id
         )
 
-        filename = f"index{page_id}.html"
+        filename = f'index{page_id}.html'
         filepath_pages = os.path.join(directory_to_pages, filename)
-        with open(filepath_pages, 'w', encoding="utf8") as file:
+        with open(filepath_pages, 'w', encoding='utf8') as file:
             file.write(rendered_page)
 
 
 def regenerate(env, directory_to_pages, pages_dirname):
-    with open("meta_data.json", "r", encoding="utf-8") as file:
+    with open('meta_data.json', 'r', encoding='utf-8') as file:
         books = json.load(file)
 
     pages = split_pages(books)
