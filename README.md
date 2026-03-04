@@ -17,6 +17,8 @@ Cкрипт генерирует статические HTML‑страницы 
 - Установите зависимости командой `pip install -r requirements.txt`
 - Запустите livereload-сервер командой `python3 render_website.py`
 
+После запуска render_website.py перейти по [ссылке](http://127.0.0.1:5500/pages/).
+
 Основные файлы в проекте:
 
 - render_website.py — основной скрипт генерации.
