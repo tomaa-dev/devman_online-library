@@ -51,15 +51,6 @@ def regenerate(env, directory_to_pages, pages_dirname):
     template = env.get_template('template.html')
     on_reload(template, directory_to_pages, pages)
 
-    if pages:
-        first_page_path = os.path.join(directory_to_pages, "index1.html")
-        index_path = os.path.join(directory_to_pages, "index.html")
-        if os.path.exists(first_page_path):
-            with open(first_page_path, 'r', encoding="utf8") as src:
-                content = src.read()
-            with open(index_path, 'w', encoding="utf8") as dst:
-                dst.write(content)
-
 
 def main():
     pages_dirname = 'pages'
