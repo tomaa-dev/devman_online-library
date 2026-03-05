@@ -42,7 +42,7 @@ def on_reload(template, directory_to_pages, pages):
             file.write(rendered_page)
 
 
-def regenerate(env, directory_to_pages, pages_dirname):
+def regenerate(env, directory_to_pages):
     with open('meta_data.json', 'r', encoding='utf-8') as file:
         books = json.load(file)
 
@@ -66,7 +66,7 @@ def main():
     directory_to_pages = os.path.join(base_directory, pages_dirname)
     os.makedirs(directory_to_pages, exist_ok=True)
 
-    regenerate_no_args = partial(regenerate, env, directory_to_pages, pages_dirname)
+    regenerate_no_args = partial(regenerate, env, directory_to_pages)
     regenerate_no_args()
 
     server = Server()
